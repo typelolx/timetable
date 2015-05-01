@@ -7,6 +7,7 @@ public class Request {
     private Lesson lesson;
     private Group group;
     private Integer hours;
+    private Integer half;
 
 
     public Request() {
@@ -44,6 +45,13 @@ public class Request {
         return hours;
     }
 
+    public Integer getHalf() {
+        return half;
+    }
+
+    public void setHalf(Integer half) {
+        this.half = half;
+    }
 
     @Override
     public String toString() {
@@ -52,6 +60,7 @@ public class Request {
                 ", lesson=" + lesson +
                 ", group=" + group +
                 ", hours=" + hours +
+                ", half=" + half +
                 '}';
     }
 }

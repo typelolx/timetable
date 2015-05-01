@@ -119,11 +119,14 @@ public class ExcelLoader {
 
                 int hours = toInt(requestConfig[4]);
 
+                int half = toInt(requestConfig[5]);
+
                 Request request = new Request();
                 request.setGroup(group);
                 request.setLesson(lesson);
                 request.setTeacher(teacher);
                 request.setHours(hours);
+                request.setHalf(half);
 
                 System.out.println("Request : " + request);
                 REPO.addRequests(request);
@@ -175,7 +178,8 @@ public class ExcelLoader {
 
         RESUTLS.put(++resultsCounter, result);
 
-        return "OK : " + String.valueOf(resultsCounter);
+        return "OK : " + String.valueOf(resultsCounter)
+                 + " : " + "Не размещено : " + result.getUnplacedRequest().size();
 
     }
 
@@ -191,7 +195,7 @@ public class ExcelLoader {
         TimetableBuilderResult result = RESUTLS.get(toInt(number));
 
         if (result == null) {
-            return new String[][]{{"No result with number : " + number}};
+            return new String[][]{{"Нет результата с номером : " + number}};
         }
 
 

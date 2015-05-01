@@ -1,7 +1,7 @@
 package org.home.timetable.builders;
 
 import org.home.timetable.TestSupport;
-import org.home.timetable.builders.constraints.NoClashesConstraint;
+import org.home.timetable.builders.constraints.*;
 import org.junit.Test;
 
 public class TimetableBuilderTest {
@@ -16,6 +16,10 @@ public class TimetableBuilderTest {
         TimetableRater rater = new TimetableRater();
 
         rater.addConstraint(new NoClashesConstraint());
+        rater.addConstraint(new NoDupLessonsConstraint());
+        rater.addConstraint(new RoomTypeConstraint());
+        rater.addConstraint(new TeacherInOneDayConstraint());
+        rater.addConstraint(new TimeslotConstraint());
 
 
         builder.setRepo(TestSupport.createRepo(5, 10, 5, 2, 20, 10));
