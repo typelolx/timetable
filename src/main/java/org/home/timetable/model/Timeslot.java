@@ -1,7 +1,5 @@
 package org.home.timetable.model;
 
-import com.sun.tools.corba.se.idl.constExpr.Times;
-
 import java.util.Arrays;
 import java.util.List;
 
