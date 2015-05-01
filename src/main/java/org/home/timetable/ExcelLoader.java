@@ -6,6 +6,7 @@ import org.home.timetable.builders.TimetableBuilder;
 import org.home.timetable.builders.TimetableBuilderResult;
 import org.home.timetable.builders.TimetableRater;
 import org.home.timetable.builders.constraints.NoClashesConstraint;
+import org.home.timetable.builders.constraints.NoDupLessonsConstraint;
 import org.home.timetable.builders.constraints.RoomTypeConstraint;
 import org.home.timetable.builders.constraints.TimeslotConstraint;
 import org.home.timetable.model.*;
@@ -153,6 +154,7 @@ public class ExcelLoader {
         rater.addConstraint(new NoClashesConstraint());
         rater.addConstraint(new TimeslotConstraint());
         rater.addConstraint(new RoomTypeConstraint());
+        rater.addConstraint(new NoDupLessonsConstraint());
 
         TimetableBuilder builder = new TimetableBuilder();
 
@@ -182,6 +184,9 @@ public class ExcelLoader {
             category = "Timetable")
     public static String[][] displayTimeTable(Object number) {
 
+        if (number == null) {
+            return new  String[][] {{"Не указан номер расписания!"}};
+        }
 
         TimetableBuilderResult result = RESUTLS.get(toInt(number));
 
@@ -195,7 +200,9 @@ public class ExcelLoader {
         List<Timeslot> allTimeslots = Timeslot.all();
 
 
-        String[][] display = new String[allWeekdays.size() * allTimeslots.size()][allGroups.size()];
+        String[][] display = new String
+                [allGroups.size()]
+                [allWeekdays.size() * allTimeslots.size()];
 
 
         for (Position position : result.getTimetable().getPositions()) {
@@ -210,7 +217,7 @@ public class ExcelLoader {
                     allTimeslots.indexOf(position.getTimeslot());
 
 
-            display[slotIndex][grIndex] = text;
+            display[grIndex][slotIndex] = text;
 
 
         }
