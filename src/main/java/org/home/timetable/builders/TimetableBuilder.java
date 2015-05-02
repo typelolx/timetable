@@ -108,7 +108,7 @@ public class TimetableBuilder {
         ArrayList<Position> positions = new ArrayList<Position>();
 
         for (Weekday weekday : Weekday.all()) {
-            for (Timeslot timeslot : Timeslot.all(1)) {
+            for (Timeslot timeslot : Timeslot.all(request.getHalf())) {
                 for (Room room : repo.getRooms()) {
                     Position position = new Position();
 

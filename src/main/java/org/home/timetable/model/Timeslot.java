@@ -5,20 +5,20 @@ import java.util.List;
 
 public enum Timeslot {
 
-    S1, S2, S3, S4, S5, S6, S7;
+    S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13;
 
     public static List<Timeslot> all(){
 
-        return Arrays.asList(S1, S2, S3, S4, S5, S6, S7);
+        return Arrays.asList(S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13);
 
     }
 
     public static List<Timeslot> firstHalf() {
-        return Arrays.asList(S1, S2, S3, S4);
+        return Arrays.asList(S1, S2, S3, S4, S5, S6, S7);
     }
 
     public static List<Timeslot> secondHalf () {
-        return Arrays.asList(S5, S6, S7);
+        return Arrays.asList(S8, S9, S10, S11, S12, S13);
     }
 
     Timeslot() {

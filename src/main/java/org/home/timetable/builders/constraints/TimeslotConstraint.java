@@ -32,7 +32,13 @@ public class TimeslotConstraint implements IConstraint {
         timeslotRates.put(Timeslot.S4, 3);
         timeslotRates.put(Timeslot.S5, 2);
         timeslotRates.put(Timeslot.S6, 1);
-        timeslotRates.put(Timeslot.S7, 0);
+        timeslotRates.put(Timeslot.S7, 1);
+        timeslotRates.put(Timeslot.S8, 1);
+        timeslotRates.put(Timeslot.S9, 1);
+        timeslotRates.put(Timeslot.S10, 1);
+        timeslotRates.put(Timeslot.S11, 1);
+        timeslotRates.put(Timeslot.S12, 1);
+        timeslotRates.put(Timeslot.S13, 1);
 
 
     }
@@ -55,6 +61,12 @@ public class TimeslotConstraint implements IConstraint {
         this.timeslotRates.put(Timeslot.S5, timeslotRates[4]);
         this.timeslotRates.put(Timeslot.S6, timeslotRates[5]);
         this.timeslotRates.put(Timeslot.S7, timeslotRates[6]);
+        this.timeslotRates.put(Timeslot.S8, timeslotRates[7]);
+        this.timeslotRates.put(Timeslot.S9, timeslotRates[8]);
+        this.timeslotRates.put(Timeslot.S10, timeslotRates[9]);
+        this.timeslotRates.put(Timeslot.S11, timeslotRates[10]);
+        this.timeslotRates.put(Timeslot.S12, timeslotRates[11]);
+        this.timeslotRates.put(Timeslot.S13, timeslotRates[12]);
     }
 
 

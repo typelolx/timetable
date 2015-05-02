@@ -56,6 +56,7 @@ public class TestSupport {
             request.setLesson(rnd(lPool));
             request.setGroup(rnd(gPool));
             request.setHours(rnd(0,3));
+            request.setHalf(1);
             requests[i] = request;
         }
 

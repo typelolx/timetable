@@ -12,6 +12,7 @@ import org.home.timetable.builders.constraints.TimeslotConstraint;
 import org.home.timetable.model.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class ExcelLoader {
 
     private static final Config CONFIG = new Config();
 
-    private static final HashMap<Integer, TimetableBuilderResult> RESUTLS = new HashMap<Integer, TimetableBuilderResult>();
+    private static final HashMap<Integer, TimetableBuilderResult> RESULTS = new HashMap<Integer, TimetableBuilderResult>();
     private static Integer resultsCounter = 0;
 
     @XLFunction(name = "LoadData",
@@ -88,7 +89,13 @@ public class ExcelLoader {
                     toInt(timeslotsConf[3]),
                     toInt(timeslotsConf[4]),
                     toInt(timeslotsConf[5]),
-                    toInt(timeslotsConf[6])
+                    toInt(timeslotsConf[6]),
+                    toInt(timeslotsConf[7]),
+                    toInt(timeslotsConf[8]),
+                    toInt(timeslotsConf[9]),
+                    toInt(timeslotsConf[10]),
+                    toInt(timeslotsConf[11]),
+                    toInt(timeslotsConf[12])
             };
             System.out.println("Timeslot config : " + Arrays.toString(timeslotsConfig));
             CONFIG.setTimeslotsConf(timeslotsConfig);
@@ -147,39 +154,54 @@ public class ExcelLoader {
             category = "Timetable")
     public static String buildTimeTable() {
 
-
-        TimeslotConstraint timeslotConstraint = new TimeslotConstraint();
-        timeslotConstraint.setTimeslotRates(CONFIG.getTimeslotsConf());
-        timeslotConstraint.setWeekdayRates(CONFIG.getWeekdaysConf());
+        try {
 
 
-        TimetableRater rater = new TimetableRater();
-        rater.addConstraint(new NoClashesConstraint());
-        rater.addConstraint(new TimeslotConstraint());
-        rater.addConstraint(new RoomTypeConstraint());
-        rater.addConstraint(new NoDupLessonsConstraint());
-
-        TimetableBuilder builder = new TimetableBuilder();
-
-        builder.setRequestComparatorConfig(CONFIG.getComparatorConfig());
-        builder.setRepo(REPO);
-        builder.setRater(rater);
-
-        TimetableBuilderResult result = builder.build();
-
-        System.out.println("--- --- ---");
-        System.out.println("Unplaced : ");
-        System.out.println(result.getUnplacedRequest());
-
-        System.out.println("--- --- ---");
-        System.out.println("Timetable : ");
-        System.out.println(result.getTimetable().beautyView());
+            TimeslotConstraint timeslotConstraint = new TimeslotConstraint();
+            timeslotConstraint.setTimeslotRates(CONFIG.getTimeslotsConf());
+            timeslotConstraint.setWeekdayRates(CONFIG.getWeekdaysConf());
 
 
-        RESUTLS.put(++resultsCounter, result);
+            TimetableRater rater = new TimetableRater();
+            rater.addConstraint(new NoClashesConstraint());
+            rater.addConstraint(timeslotConstraint);
+            rater.addConstraint(new RoomTypeConstraint());
+            rater.addConstraint(new NoDupLessonsConstraint());
 
-        return "OK : " + String.valueOf(resultsCounter)
-                 + " : " + "Не размещено : " + result.getUnplacedRequest().size();
+            TimetableBuilder builder = new TimetableBuilder();
+
+            builder.setRequestComparatorConfig(CONFIG.getComparatorConfig());
+            builder.setRepo(REPO);
+            builder.setRater(rater);
+
+            TimetableBuilderResult result = builder.build();
+
+            System.out.println("--- --- ---");
+            System.out.println("Unplaced : ");
+            System.out.println(result.getUnplacedRequest());
+
+            System.out.println("--- --- ---");
+            System.out.println("Timetable : ");
+            System.out.println(result.getTimetable().beautyView());
+
+            System.out.println(new Date());
+
+            resultsCounter = resultsCounter + 1;
+
+            RESULTS.put(resultsCounter, result);
+
+
+            System.out.println("timetable number : " + resultsCounter);
+            System.out.println("total timetables built : " + RESULTS.size());
+
+            return "OK : " + String.valueOf(resultsCounter)
+                    + " : " + "Не размещено : " + result.getUnplacedRequest().size();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return e.getMessage();
+        }
 
     }
 
@@ -188,46 +210,54 @@ public class ExcelLoader {
             category = "Timetable")
     public static String[][] displayTimeTable(Object number) {
 
-        if (number == null) {
-            return new  String[][] {{"Не указан номер расписания!"}};
+        try {
+
+            if (number == null) {
+                return new String[][]{{"Не указан номер расписания!"}};
+            }
+
+            TimetableBuilderResult result = RESULTS.get(toInt(number));
+
+            if (result == null) {
+                return new String[][]{{"Нет результата с номером : " + number}};
+            }
+
+
+            List<Group> allGroups = REPO.getGroups();
+            List<Weekday> allWeekdays = Weekday.all();
+            List<Timeslot> allTimeslots = Timeslot.all();
+
+
+            String[][] display = new String
+                    [allGroups.size()]
+                    [allWeekdays.size() * allTimeslots.size()];
+
+
+            for (Position position : result.getTimetable().getPositions()) {
+
+                int grIndex = allGroups.indexOf(position.getGroup());
+
+                String text = position.getLesson().getName() + " : " +
+                        position.getTeacher().getName() + " : " +
+                        position.getRoom().getName();
+
+                int slotIndex = allTimeslots.size() * allWeekdays.indexOf(position.getWeekday()) +
+                        allTimeslots.indexOf(position.getTimeslot());
+
+
+                display[grIndex][slotIndex] = text;
+
+
+            }
+
+
+            return display;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new String[][]{{e.getMessage()}};
         }
-
-        TimetableBuilderResult result = RESUTLS.get(toInt(number));
-
-        if (result == null) {
-            return new String[][]{{"Нет результата с номером : " + number}};
-        }
-
-
-        List<Group> allGroups = REPO.getGroups();
-        List<Weekday> allWeekdays = Weekday.all();
-        List<Timeslot> allTimeslots = Timeslot.all();
-
-
-        String[][] display = new String
-                [allGroups.size()]
-                [allWeekdays.size() * allTimeslots.size()];
-
-
-        for (Position position : result.getTimetable().getPositions()) {
-
-            int grIndex = allGroups.indexOf(position.getGroup());
-
-            String text = position.getLesson().getName() + " : " +
-                    position.getTeacher().getName() + " : " +
-                    position.getRoom().getName();
-
-            int slotIndex = allTimeslots.size() * allWeekdays.indexOf(position.getWeekday()) +
-                    allTimeslots.indexOf(position.getTimeslot());
-
-
-            display[grIndex][slotIndex] = text;
-
-
-        }
-
-
-        return display;
 
     }
 
